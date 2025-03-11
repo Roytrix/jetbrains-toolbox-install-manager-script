@@ -114,7 +114,7 @@ check_running_jetbrains_tools() {
 
     # Get PIDs of processes that match the pattern and contain JetBrains keywords in their command line
     local PIDS
-    PIDS=$(ps aux | grep -i "$pattern" | grep -i "jetbrains\|\.jbr\|\.idea\|jetbrains-toolbox" | grep -v "grep" | grep -v "install_jetbrains_toolbox.sh" | awk '{print $2}')
+    PIDS=$(pgrep -f "$pattern" | grep -i "jetbrains\|\.jbr\|\.idea\|jetbrains-toolbox")
 
     if [ -n "$PIDS" ]; then
       for PID in $PIDS; do
@@ -167,7 +167,7 @@ close_running_jetbrains_tools() {
   PARENT_PID=$PPID
 
   # Find JetBrains processes - look specifically in JetBrains directories
-  PROCESSES=$(ps axo pid,comm,cmd | grep -i "JetBrains\|jetbrains" | grep -v "grep")
+  PROCESSES=$(pgrep -af "JetBrains\|jetbrains" | grep -v "install_jetbrains_toolbox.sh")
 
   # Process the output to identify main and helper processes
   while read -r line; do
@@ -443,7 +443,7 @@ main() {
     echo "2) Uninstall JetBrains Toolbox"
     echo "3) Show running JetBrains tools"
     echo "4) Exit"
-    read -p "Enter your choice (1-4): " choice
+    read -r -p "Enter your choice (1-4): " choice
 
     case $choice in
       1)
